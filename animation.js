@@ -611,12 +611,15 @@ export class AnimationPlayer {
         this.#animations = [];
     }
 
-    Resize(width, height, alignX=0, alignY=0) {
-        const prevImageData = this.#context.getImageData(0, 0, this.#canvas.width, this.#canvas.height);
+    Resize(width, height, alignX=0, alignY) {
+        alignY = alignY ?? alignX;
+
         this.ResizeRaw(width, height);
-        this.#context.putImageData(prevImageData,
-            (width - prevImageData.width) * alignX,
-            (height - prevImageData.height) * alignY);
+        for (const anim of this.#animations) {
+            this.#context.drawImage(anim.lastFrame.canvas,
+                (width - anim.lastFrame.canvas.width) * alignX,
+                (height - anim.lastFrame.canvas.height) * alignY);
+        }
     }
 
     ResizeRaw(width, height) {
