@@ -15,6 +15,10 @@ window.addEventListener("load", async () => {
         player.Stop();
     });
 
+    window.addEventListener("touchstart", () => {
+        player.Stop();
+    });
+
     // We want to play AnimationLoading before AnimationText to draw it below the text.
     // Moreover, the Loading animation should end after the Text animation.
     // So we provide a promise which plays the text animation on the next frame of the event loop and awaits it.
