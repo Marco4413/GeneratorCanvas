@@ -5,9 +5,9 @@ window.addEventListener("load", () => {
     const canvas = document.getElementById("animation");
     const player = new a.AnimationPlayer(canvas);
 
-    player.ResizeRaw(window.innerWidth, window.innerHeight);
+    player.Resize(window.innerWidth, window.innerHeight, 0.5);
     window.addEventListener("resize", () => {
-        player.ResizeRaw(window.innerWidth, window.innerHeight);
+        player.Resize(window.innerWidth, window.innerHeight, 0.5);
     });
 
     player.Play(Animation);
