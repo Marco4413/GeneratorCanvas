@@ -17,6 +17,12 @@ window.addEventListener("load", () => {
         }
     });
 
+    window.addEventListener("touchstart", () => {
+        if (player.playing) {
+            player.Pause();
+        } else player.Start();
+    });
+
     player.Play(Animation);
     player.Play(a.Debug.FrameRate, [a.FontSpec(24, "JetBrains Mono")]);
 });
