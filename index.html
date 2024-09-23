@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://Marco4413.github.io/static/css/dark.css">
+  <script src="https://Marco4413.github.io/static/js/copyright.js" url="https://github.com/Marco4413/GeneratorCanvas" name="Marco4413" year="2024"></script>
+
+  <title>Generator Canvas</title>
+  <script type="module" src="./home/script.js"></script>
+
+  <style>
+    #animation {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      background-color: rgba(0, 0, 0, 0.5);
+
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generator Canvas</h1>
+  <div>
+    <h2>About</h2>
+    <p>Generator Canvas is a JavaScript library which enables the rendering of canvas animations through generator functions.</p>
+    <p>This project was inspired by <a href="https://github.com/motion-canvas/motion-canvas">Motion Canvas</a>.</p>
+    <p>TypeScript type definitions are provided as documentation and for auto-completion. So it is recommended to check those out.</p>
+    <p>Please, check out the <a href="#examples">examples</a> below.</p>
+  </div>
+  <div>
+    <h2>Tired of the loading animation of this page?</h2>
+    <p>Press any key to skip it.</p>
+  </div>
+  <div id="examples">
+    <h2>Examples:</h2>
+    <ol>
+      <li value="0"><a href="./test/">Dev Test</a> (used for testing during development)</li>
+      <li><a href="./examples/001-simple_animation/">Simple Animation</a></li>
+      <li><a href="./examples/002-frame_view/">Frame View</a></li>
+      <li><a href="./examples/003-async/">Async</a></li>
+      <li><a href="./examples/004-shape_renderer/">Shape Renderer</a></li>
+      <li><a href="./examples/005-fractal/">Fractal</a></li>
+    </ol>
+
+    <p>You may also want to look at the source code of <a href="./home/script.js">this page</a>.</p>
+  </div>
+  <br>
+
+  <canvas id="animation"></canvas>
+</body>
+</html>
