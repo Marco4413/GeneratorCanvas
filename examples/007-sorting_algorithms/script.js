@@ -65,9 +65,9 @@ window.addEventListener("load", () => {
         onRestart();
     };
 
-    $algoSelect.addEventListener("change", () => onSelectionUpdate());
-    $stepDelay.addEventListener("change", ev => { if (ev.target.checkValidity()) onStepDelayChange();});
-    $itemCount.addEventListener("change", ev => { if (ev.target.checkValidity()) onItemCountChange();});
+    $algoSelect.addEventListener("input", () => onSelectionUpdate());
+    $stepDelay.addEventListener("input", ev => { if (!Number.isNaN(ev.target.valueAsNumber)) onStepDelayChange();});
+    $itemCount.addEventListener("input", ev => { if (!Number.isNaN(ev.target.valueAsNumber)) onItemCountChange();});
     $restart.addEventListener("click", () => onRestart());
 
     onStepDelayChange();
