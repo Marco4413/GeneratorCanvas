@@ -3,7 +3,8 @@ import {
     AnimatableInsertionSort,
     AnimatableMergeSort,
     AnimatableQuickSort,
-    SortingAnimation
+    AnimatableHeapSort,
+    SortingAnimation,
 } from "./sorting.js";
 
 
@@ -40,6 +41,10 @@ window.addEventListener("load", () => {
             break;
         case "quick":
             sortOpt.sorter = AnimatableQuickSort;
+            onRestart();
+            break;
+        case "heap":
+            sortOpt.sorter = AnimatableHeapSort;
             onRestart();
             break;
         default:

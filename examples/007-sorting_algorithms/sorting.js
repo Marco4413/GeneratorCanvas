@@ -123,6 +123,89 @@ export function* AnimatableQuickSort(array) {
     yield* QuickSort(array, 0, array.length);
 }
 
+export function HeapLeft(i) {
+    return i*2;
+}
+
+export function HeapRight(i) {
+    return i*2+1;
+}
+
+export function* Heapify(heap, i, key, comparator) {
+    while (true) {
+        const leftI  = HeapLeft(i);
+        const rightI = HeapRight(i);
+    
+        let swapI = i;
+        if (leftI < heap.$heapSize) {
+            yield [[ActionType.COMPARE, leftI, swapI]];
+            if (comparator(key(heap[leftI]), key(heap[swapI])) < 0) {
+                swapI = leftI;
+            }
+        }
+    
+        if (rightI < heap.$heapSize) {
+            yield [[ActionType.COMPARE, rightI, swapI]];
+            if (comparator(key(heap[rightI]), key(heap[swapI])) < 0) {
+                swapI = rightI;
+            }
+        }
+    
+        if (swapI === i)
+            break;
+        
+        {
+            yield [[ActionType.SWAP, swapI, i]];
+            const tmp = heap[swapI];
+            heap[swapI] = heap[i];
+            heap[i] = tmp;
+            
+            i = swapI; // Tail recursion
+        }
+    }
+}
+
+// Adds the field `$heapSize` to `array`
+export function* HeapCreateInPlace(array, key, comparator) {
+    array.$heapSize = array.length;
+    for (let i = Math.floor(array.length/2); i >= 0; i--) {
+        yield* Heapify(array, i, key, comparator);
+    }
+}
+
+export function* HeapExtract(heap, key, comparator) {
+    if (heap.$heapSize <= 0) return;
+    else if (heap.$heapSize <= 1) {
+        heap.$heapSize--;
+        return heap[0];
+    }
+
+    heap.$heapSize--;
+    yield [[ActionType.SWAP, 0, heap.$heapSize-1]];
+    {
+        const tmp = heap[heap.$heapSize];
+        heap[heap.$heapSize] = heap[0];
+        heap[0] = tmp;
+    }
+
+    yield* Heapify(heap, 0, key, comparator);
+    return heap[heap.$heapSize];
+}
+
+// Adds the field `$heapSize` to `array`
+export function* HeapSort(array, key=(o => o), comparator=((a, b) => a-b)) {
+    const heapComparator = (a, b) => -comparator(a, b);
+    yield* HeapCreateInPlace(array, key, heapComparator);
+    while (array.$heapSize > 0) {
+        yield* HeapExtract(array, key, heapComparator);
+    }
+}
+
+// Adds the field `$heapSize` to `array`
+export function* AnimatableHeapSort(array) {
+    yield* HeapSort(array);
+}
+
 /** @param {a.AnimationContext} c */
 export function* SortingAnimation(c, sortOpt) {
     const array = new Array(sortOpt.itemCount ?? 256).fill(0).map(() => Math.random());
