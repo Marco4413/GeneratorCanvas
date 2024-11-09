@@ -58,10 +58,19 @@ window.addEventListener("load", () => {
         sortOpt.stepDelay = $stepDelay.valueAsNumber;
     };
 
+    /** @type {HTMLInputElement} */
+    const $itemCount = document.getElementById("item-count");
+    const onItemCountChange = () => {
+        sortOpt.itemCount = Math.max(0, $itemCount.valueAsNumber);
+        onRestart();
+    };
+
     $algoSelect.addEventListener("change", () => onSelectionUpdate());
-    $stepDelay.addEventListener("change", () => onStepDelayChange());
+    $stepDelay.addEventListener("change", ev => { if (ev.target.checkValidity()) onStepDelayChange();});
+    $itemCount.addEventListener("change", ev => { if (ev.target.checkValidity()) onItemCountChange();});
     $restart.addEventListener("click", () => onRestart());
 
     onStepDelayChange();
+    onItemCountChange();
     onSelectionUpdate();
 });
