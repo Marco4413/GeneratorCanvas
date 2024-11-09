@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://Marco4413.github.io/static/css/dark.css">
+
+  <title>Sorting Algorithms Example</title>
+  <script type="module" src="./script.js"></script>
+
+  <style>
+    #animation {
+      z-index: -1;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <p>
+      <label for="sorting-algorithm">Algorithm&colon;</label>
+      <select id="sorting-algorithm">
+        <option value="insert">InsertionSort</option>
+        <option value="merge">MergeSort</option>
+        <option value="quick">QuickSort (Lomuto)</option>
+      </select>
+    </p>
+    <p>
+      <label for="step-delay">Step Delay&colon;</label>
+      <input type="number" id="step-delay" value="-1" required>
+    </p>
+    <p>
+      <input type="button" id="restart" value="Restart">
+    </p>
+  </div>
+  <canvas id="animation"></canvas>
+</body>
+</html>
