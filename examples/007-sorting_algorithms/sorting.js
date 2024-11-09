@@ -94,6 +94,7 @@ export function* Partition(array, p, q, key, comparator) {
 
     const xi = q-1;
     const x = key(array[xi]);
+    yield [[ActionType.SELECT, xi]];
 
     let i = p-1;
     for (let j = p; j < q; j++) {
