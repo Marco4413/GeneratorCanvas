@@ -125,7 +125,7 @@ export function* AnimatableQuickSort(array) {
 
 /** @param {a.AnimationContext} c */
 export function* SortingAnimation(c, sortOpt) {
-    const array = new Array(256).fill(0).map(() => Math.random());
+    const array = new Array(sortOpt.itemCount ?? 256).fill(0).map(() => Math.random());
     console.log(array);
     
     const defaultColor = a.HexColor("#e6e2e1");
@@ -183,8 +183,8 @@ export function* SortingAnimation(c, sortOpt) {
         } while (waitTime < sortOpt.stepDelay);
     }
 
-    while (true) {
+    do {
         updateRects(defaultColor);
         yield view;
-    }
+    } while (!sortOpt.stopAtEnd);
 }
