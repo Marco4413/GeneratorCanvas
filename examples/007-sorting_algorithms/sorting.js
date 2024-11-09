@@ -209,7 +209,7 @@ export function* AnimatableHeapSort(array) {
 /** @param {a.AnimationContext} c */
 export function* SortingAnimation(c, sortOpt) {
     const array = new Array(sortOpt.itemCount ?? 256).fill(0).map(() => Math.random());
-    console.log(array);
+    // console.log(array);
     
     const defaultColor = a.HexColor("#e6e2e1");
     const selectColor  = a.HexColor("#5652f1");
@@ -218,7 +218,7 @@ export function* SortingAnimation(c, sortOpt) {
     const shrinkHeight = 0.75;
     const horizontalMargin = 0.15;
     const rects = array.map((_, idx) => new f.Rect(idx-array.length/2, 0, 1, 0, defaultColor));
-    console.log(rects);
+    // console.log(rects);
 
     const view = new f.FrameView();
     rects.forEach(rect => view.Add(rect));
