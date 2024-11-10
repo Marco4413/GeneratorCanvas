@@ -16,30 +16,46 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
+
+    #settings > div {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 5pt;
+      margin: 5pt 0px;
+    }
   </style>
 </head>
 <body>
-  <div>
-    <p>
-      <label for="sorting-algorithm">Algorithm&colon;</label>
-      <select id="sorting-algorithm">
-        <option value="insert">InsertionSort</option>
-        <option value="merge">MergeSort</option>
-        <option value="quick">QuickSort (Lomuto)</option>
-        <option value="heap">HeapSort</option>
-      </select>
-    </p>
-    <p>
-      <label for="step-delay">Step Delay&colon;</label>
-      <input type="number" id="step-delay" value="-1" required>
-    </p>
-    <p>
-      <label for="step-delay">Item Count&colon;</label>
-      <input type="number" id="item-count" value="256" required>
-    </p>
-    <p>
+  <div id="settings">
+    <div>
+      <span>
+        <label for="sorting-algorithm">Algorithm&colon;</label>
+        <select id="sorting-algorithm">
+          <option value="insert">InsertionSort</option>
+          <option value="merge">MergeSort</option>
+          <option value="quick">QuickSort (Lomuto)</option>
+          <option value="heap">HeapSort</option>
+        </select>
+      </span>
+      <span>
+        <label for="item-count">Item Count&colon;</label>
+        <input type="number" id="item-count" value="256" required>
+      </span>
+    </div>
+    <div>
+      <span>
+        <label for="update-delay">Update Delay&colon;</label>
+        <input type="number" id="update-delay" value="-1" required>
+      </span>
+      <span>
+        <label for="steps-per-update">Steps Per Update&colon;</label>
+        <input type="number" id="steps-per-update" value="1" required>
+      </span>
+    </div>
+    <div>
       <input type="button" id="restart" value="Restart">
-    </p>
+    </div>
   </div>
   <canvas id="animation"></canvas>
 </body>

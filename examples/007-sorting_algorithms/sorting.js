@@ -235,6 +235,9 @@ export function* SortingAnimation(c, sortOpt) {
         });
     };
 
+    let stepsSinceLastUpdate = 0;
+    let updateTime = 0;
+
     for (const actions of sortOpt.sorter(array)) {
         updateRects(defaultColor);
 
@@ -259,16 +262,24 @@ export function* SortingAnimation(c, sortOpt) {
             }
         }
 
-        let waitTime = 0;
+        ++stepsSinceLastUpdate;
+        if (sortOpt.stepsPerUpdate && stepsSinceLastUpdate < sortOpt.stepsPerUpdate) {
+            continue;
+        }
+        stepsSinceLastUpdate = 0;
+
+        updateTime = 0;
         do {
-            waitTime += c.stats.dt;
+            updateTime += c.stats.dt;
             updateRects();
             yield view;
-        } while (waitTime < sortOpt.stepDelay);
+        } while (updateTime < (sortOpt.updateDelay ?? -1));
     }
 
+    updateTime = 0;
     do {
+        updateTime += c.stats.dt;
         updateRects(defaultColor);
         yield view;
-    } while (!sortOpt.stopAtEnd);
+    } while (!sortOpt.stopAtEnd || updateTime < (sortOpt.updateDelay ?? -1));
 }

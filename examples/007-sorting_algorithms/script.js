@@ -53,24 +53,31 @@ window.addEventListener("load", () => {
     };
 
     /** @type {HTMLInputElement} */
-    const $stepDelay = document.getElementById("step-delay");
-    const onStepDelayChange = () => {
-        sortOpt.stepDelay = $stepDelay.valueAsNumber;
+    const $updateDelay = document.getElementById("update-delay");
+    /** @type {HTMLInputElement} */
+    const $stepsPerUpdate = document.getElementById("steps-per-update");
+    const onStepSettingsChange = () => {
+        if (!Number.isNaN($updateDelay.valueAsNumber))
+            sortOpt.updateDelay = $updateDelay.valueAsNumber;
+        if (!Number.isNaN($stepsPerUpdate.valueAsNumber))
+            sortOpt.stepsPerUpdate = Math.round($stepsPerUpdate.valueAsNumber);
     };
 
     /** @type {HTMLInputElement} */
     const $itemCount = document.getElementById("item-count");
     const onItemCountChange = () => {
-        sortOpt.itemCount = Math.max(0, $itemCount.valueAsNumber);
+        if (!Number.isNaN($itemCount.valueAsNumber))
+            sortOpt.itemCount = Math.max(0, Math.round($itemCount.valueAsNumber));
         onRestart();
     };
 
     $algoSelect.addEventListener("input", () => onSelectionUpdate());
-    $stepDelay.addEventListener("input", ev => { if (!Number.isNaN(ev.target.valueAsNumber)) onStepDelayChange();});
-    $itemCount.addEventListener("input", ev => { if (!Number.isNaN(ev.target.valueAsNumber)) onItemCountChange();});
+    $updateDelay.addEventListener("input", () => onStepSettingsChange());
+    $stepsPerUpdate.addEventListener("input", () => onStepSettingsChange());
+    $itemCount.addEventListener("input", () => onItemCountChange());
     $restart.addEventListener("click", () => onRestart());
 
-    onStepDelayChange();
+    onStepSettingsChange();
     onItemCountChange();
     onSelectionUpdate();
 });
