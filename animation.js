@@ -352,12 +352,13 @@ export function Clear() {
 }
 
 export const Debug = Object.freeze({
-    *FrameRate(c, font=FontSpec(24, "monospace"), color=HexColor("#e6e2e1"), margin=50, updateTime=250, loopRef=[true]) {
+    *FrameRate(c, font=FontSpec(24, "monospace"), color=HexColor("#e6e2e1"), margin=50, updateTime=250, loopRef=[true], proxyContext) {
+        proxyContext = proxyContext ?? c;
         while (loopRef[0]) {
             c.ctx.font = FontToStyle(font);
             c.ctx.fillStyle = ColorToStyle(color);
             yield ShapeText(
-                `${Math.floor(c.stats.avgFps)} | ${Math.floor(c.stats.minFps)} | ${Math.floor(c.stats.maxFps)} FPS`,
+                `${Math.floor(proxyContext.stats.avgFps)} | ${Math.floor(proxyContext.stats.minFps)} | ${Math.floor(proxyContext.stats.maxFps)} FPS`,
                 margin, c.height-margin);
             yield* Pause(updateTime);
         }

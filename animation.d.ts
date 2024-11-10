@@ -166,7 +166,17 @@ export const EMPTY_FRAME: object;
 
 /** A collection of debugging animations. */
 export const Debug: {
-    FrameRate: (animContext: AnimationContext, font?: Font, color?: Color, margin?: number, updateTime?: number, loopRef?: [boolean]) => Generator<AnimationFrame>
+    /**
+     * @param animContext The context where the FrameRate is drawn.
+     * @param font The font to be used for the text.
+     * @param color The color of the text.
+     * @param margin The bottom and left margin of the counter.
+     * @param updateTime Interval at which the counter is updated.
+     * @param loopRef An array of a single boolean value which if set to false it will stop this animation.
+     * @param proxyContext The context to display the frame rate of (default: animContext).
+     * @returns The animation.
+     */
+    FrameRate: (animContext: AnimationContext, font?: Font, color?: Color, margin?: number, updateTime?: number, loopRef?: [boolean], proxyContext?: AnimationContext) => Generator<AnimationFrame>
 };
 
 export class AnimationPlayer<CanvasType extends HTMLCanvasElement|OffscreenCanvas> {
