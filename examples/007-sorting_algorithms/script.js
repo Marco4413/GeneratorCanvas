@@ -1,5 +1,6 @@
 import * as a from "../../animation.js";
 import {
+    AnimatableBubbleSort,
     AnimatableInsertionSort,
     AnimatableMergeSort,
     AnimatableQuickSort,
@@ -31,6 +32,10 @@ window.addEventListener("load", () => {
     const onSelectionUpdate = () => {
         const $option = $algoSelect.options.item($algoSelect.selectedIndex);
         switch ($option.value) {
+        case "bubble":
+            sortOpt.sorter = AnimatableBubbleSort;
+            onRestart();
+            break;
         case "insert":
             sortOpt.sorter = AnimatableInsertionSort;
             onRestart();

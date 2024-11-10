@@ -25,6 +25,32 @@ export function* ZipActions(...its) {
     }
 }
 
+export function* BubbleSort(array, key=(o => o), comparator=((a, b) => a-b)) {
+    for (let i = 0; i < array.length-1; i++) {
+        let minI = i;
+        for (let j = i+1; j < array.length; j++) {
+            yield [
+                [ActionType.COMPARE, j, minI],
+                [ActionType.SELECT, i]];
+            if (comparator(key(array[j]), key(array[minI])) < 0) {
+                minI = j;
+            }
+        }
+        if (minI === i) {
+            yield [[ActionType.SELECT, i]];
+        } else {
+            yield [[ActionType.SWAP, i, minI]];
+            const tmp   = array[i];
+            array[i]    = array[minI];
+            array[minI] = tmp;
+        }
+    }
+}
+
+export function* AnimatableBubbleSort(array) {
+    yield* BubbleSort(array);
+}
+
 export function* InsertionSort(array, key=(o => o), comparator=((a, b) => a-b)) {
     for (let i = 1; i < array.length; i++) {
         yield [[ActionType.SELECT, i]];
