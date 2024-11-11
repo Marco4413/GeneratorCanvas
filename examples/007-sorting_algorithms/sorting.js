@@ -131,7 +131,9 @@ export function* Partition(array, p, q, key, comparator) {
     for (let j = p; j < q; j++) {
         yield [[ActionType.COMPARE, j, xi]];
         if (comparator(key(array[j]), x) <= 0) {
-            yield [[ActionType.SWAP, i+1, j]];
+            yield [
+                [ActionType.SELECT, xi],
+                [ActionType.SWAP, i+1, j]];
             const tmp  = array[j];
             array[j]   = array[i+1];
             array[i+1] = tmp;
