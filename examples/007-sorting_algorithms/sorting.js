@@ -55,8 +55,11 @@ export function* InsertionSort(array, key=(o => o), comparator=((a, b) => a-b)) 
     for (let i = 1; i < array.length; i++) {
         yield [[ActionType.SELECT, i]];
         let j = i-1;
-        while (j >= 0 && comparator(key(array[j+1]), key(array[j])) < 0) {
+        while (j >= 0) {
             yield [[ActionType.COMPARE, j+1, j]];
+            if (comparator(key(array[j+1]), key(array[j])) >= 0)
+                break;
+
             yield [[ActionType.SWAP, j+1, j]];
             const tmp  = array[j];
             array[j]   = array[j+1];
