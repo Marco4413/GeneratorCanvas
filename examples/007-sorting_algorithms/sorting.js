@@ -116,7 +116,9 @@ export function* AnimatableMergeSort(array) {
 }
 
 export function* Partition(array, p, q, key, comparator) {
-    if (q-p <= 1) return 0;
+    if (q-p <= 1) {
+        throw new Error(`Invalid range [${q},${p}) in array of len ${array.length}`);
+    }
 
     const xi = q-1;
     const x = key(array[xi]);
