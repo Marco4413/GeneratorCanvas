@@ -295,13 +295,21 @@ export function* SortingAnimation(c, sortOpt) {
             }
         }
 
+        updateTime = 0;
+        if (sortOpt.step) {
+            while (!sortOpt.step()) {
+                updateTime += c.stats.dt;
+                updateRects();
+                yield view;
+            }
+        }
+
         ++stepsSinceLastUpdate;
         if (sortOpt.stepsPerUpdate && stepsSinceLastUpdate < sortOpt.stepsPerUpdate) {
             continue;
         }
         stepsSinceLastUpdate = 0;
 
-        updateTime = 0;
         do {
             updateTime += c.stats.dt;
             updateRects();

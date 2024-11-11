@@ -18,7 +18,32 @@ window.addEventListener("load", () => {
         player.ResizeRaw(window.innerWidth, window.innerHeight);
     });
 
-    const sortOpt = { sorter: AnimatableInsertionSort, stepDelay: -1 };
+    const $enableStepper = document.getElementById("enable-stepper");
+    let stepOnce = false;
+
+    $canvas.addEventListener("click", () => {
+        stepOnce = true;
+    });
+
+    window.addEventListener("keypress", ev => {
+        switch (ev.key.toLowerCase()) {
+        case "s":
+            stepOnce = true;
+            break;
+        default:
+        }
+    });
+
+    const sortOpt = {
+        sorter: AnimatableInsertionSort,
+        step: () => {
+            if (!$enableStepper.checked)
+                return true;
+            const canStep = stepOnce;
+            stepOnce = false;
+            return canStep;
+        },
+    };
 
     /** @type {HTMLInputElement} */
     const $restart = document.getElementById("restart");
