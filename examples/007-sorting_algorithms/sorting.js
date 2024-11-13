@@ -107,7 +107,7 @@ export function* MergeSort(array, p, q, key=(o => o), comparator=((a, b) => a-b)
     yield [
         [ActionType.HIGHLIGHT, p],
         [ActionType.HIGHLIGHT, q-1]];
-    const r = (p+q)/2;
+    const r = Math.floor((p+q)/2);
     yield* ZipActions(
         MergeSort(array, p, r, key, comparator),
         MergeSort(array, r, q, key, comparator))
