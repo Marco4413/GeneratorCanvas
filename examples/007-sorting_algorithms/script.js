@@ -45,6 +45,9 @@ window.addEventListener("load", () => {
         },
     };
 
+    // Exported so it can be accessed through DevTools
+    window.__sortOpt = sortOpt;
+
     /** @type {HTMLInputElement} */
     const $restart = document.getElementById("restart");
     const onRestart = () => {

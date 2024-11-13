@@ -4,7 +4,7 @@ import * as f from "../../frame.js";
 // This was put into its own file so that I can import it from other websites.
 
 export const ActionType = Object.freeze({
-    SELECT: 0,
+    HIGHLIGHT: 0,
     SWAP: 1,
     COMPARE: 2,
 });
@@ -31,13 +31,13 @@ export function* BubbleSort(array, key=(o => o), comparator=((a, b) => a-b)) {
         for (let j = i+1; j < array.length; j++) {
             yield [
                 [ActionType.COMPARE, j, minI],
-                [ActionType.SELECT, i]];
+                [ActionType.HIGHLIGHT, i]];
             if (comparator(key(array[j]), key(array[minI])) < 0) {
                 minI = j;
             }
         }
         if (minI === i) {
-            yield [[ActionType.SELECT, i]];
+            yield [[ActionType.HIGHLIGHT, i]];
         } else {
             yield [[ActionType.SWAP, i, minI]];
             const tmp   = array[i];
@@ -53,7 +53,7 @@ export function* AnimatableBubbleSort(array) {
 
 export function* InsertionSort(array, key=(o => o), comparator=((a, b) => a-b)) {
     for (let i = 1; i < array.length; i++) {
-        yield [[ActionType.SELECT, i]];
+        yield [[ActionType.HIGHLIGHT, i]];
         let j = i-1;
         while (j >= 0) {
             yield [[ActionType.COMPARE, j+1, j]];
@@ -82,11 +82,11 @@ export function* Merge(array, p, r, q, key, comparator) {
         yield [[ActionType.COMPARE, i, j]];
         if (comparator(key(array[i]), key(array[j])) < 0) {
             buffer[k++] = array[i];
-            yield [[ActionType.SELECT, i]];
+            yield [[ActionType.HIGHLIGHT, i]];
             ++i;
         } else {
             buffer[k++] = array[j];
-            yield [[ActionType.SELECT, j]];
+            yield [[ActionType.HIGHLIGHT, j]];
             ++j;
         }
     }
@@ -98,15 +98,15 @@ export function* Merge(array, p, r, q, key, comparator) {
 
     for (k = 0; k < buffer.length; ++k) {
         array[p+k] = buffer[k];
-        yield [[ActionType.SELECT, p+k]];
+        yield [[ActionType.HIGHLIGHT, p+k]];
     }
 }
 
 export function* MergeSort(array, p, q, key=(o => o), comparator=((a, b) => a-b)) {
     if (q-p <= 1) return;
     yield [
-        [ActionType.SELECT, p],
-        [ActionType.SELECT, q-1]];
+        [ActionType.HIGHLIGHT, p],
+        [ActionType.HIGHLIGHT, q-1]];
     const r = (p+q)/2;
     yield* ZipActions(
         MergeSort(array, p, r, key, comparator),
@@ -125,18 +125,20 @@ export function* Partition(array, p, q, key, comparator) {
 
     const xi = q-1;
     const x = key(array[xi]);
-    yield [[ActionType.SELECT, xi]];
+    yield [[ActionType.HIGHLIGHT, xi]];
 
     let i = p-1;
     for (let j = p; j < q; j++) {
         yield [[ActionType.COMPARE, j, xi]];
         if (comparator(key(array[j]), x) <= 0) {
-            yield [
-                [ActionType.SELECT, xi],
-                [ActionType.SWAP, i+1, j]];
-            const tmp  = array[j];
-            array[j]   = array[i+1];
-            array[i+1] = tmp;
+            if (i+1 !== j) {
+                yield [
+                    [ActionType.HIGHLIGHT, xi],
+                    [ActionType.SWAP, i+1, j]];
+                const tmp  = array[j];
+                array[j]   = array[i+1];
+                array[i+1] = tmp;
+            }
             ++i;
         }
     }
@@ -274,9 +276,10 @@ export function* SortingAnimation(c, sortOpt) {
     for (const actions of sortOpt.sorter(array)) {
         updateRects(defaultColor);
 
+        const swaps = [];
         for (const action of actions) {
             switch (action[0]) {
-            case ActionType.SELECT: {
+            case ActionType.HIGHLIGHT: {
                 const [_, idx] = action;
                 rects[idx].color = selectColor;
             } break;
@@ -284,6 +287,7 @@ export function* SortingAnimation(c, sortOpt) {
                 const [_, i, j] = action;
                 rects[i].color = swapColor;
                 rects[j].color = swapColor;
+                swaps.push(action);
             } break;
             case ActionType.COMPARE: {
                 const [_, i, j] = action;
@@ -295,24 +299,35 @@ export function* SortingAnimation(c, sortOpt) {
             }
         }
 
-        updateTime = 0;
         if (sortOpt.step) {
             while (!sortOpt.step()) {
-                updateTime += c.stats.dt;
                 updateRects();
                 yield view;
             }
         }
 
-        ++stepsSinceLastUpdate;
-        if (sortOpt.stepsPerUpdate && stepsSinceLastUpdate < sortOpt.stepsPerUpdate) {
-            continue;
+        if (sortOpt.stepsPerUpdate) {
+            ++stepsSinceLastUpdate;
+            if (stepsSinceLastUpdate < sortOpt.stepsPerUpdate)
+                continue;
+            stepsSinceLastUpdate = 0;
         }
-        stepsSinceLastUpdate = 0;
 
+        updateTime = 0;
         do {
             updateTime += c.stats.dt;
             updateRects();
+
+            if (!sortOpt.disableAnimations) {
+                const t = sortOpt.updateDelay > 0 ? Math.min(updateTime/sortOpt.updateDelay, 1) : 0;
+                for (const [_, i, j] of swaps) {
+                    const iX = rects[i].x;
+                    const jX = rects[j].x;
+                    rects[i].x = a.Lerp(a.Ease.InOutQuad(t), iX, jX);
+                    rects[j].x = a.Lerp(a.Ease.InOutQuad(t), jX, iX);
+                }
+            }
+
             yield view;
         } while (updateTime < (sortOpt.updateDelay ?? -1));
     }
