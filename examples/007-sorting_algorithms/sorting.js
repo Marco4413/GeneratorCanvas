@@ -51,11 +51,17 @@ export function* AnimatableBubbleSort(array) {
     yield* BubbleSort(array);
 }
 
-export function* InsertionSort(array, key=(o => o), comparator=((a, b) => a-b)) {
-    for (let i = 1; i < array.length; i++) {
+export function* InsertionSort(array, p, q, key=(o => o), comparator=((a, b) => a-b)) {
+    // InsertionSort
+    //     was modified to accept a range in which to operate [p,q)
+    //      the change was needed to visualize the BucketSort algorithm.
+    //     The old loops are still here to allow anyone to see the simplest implementation.
+    // for (let i = 1; i < array.length; i++) {
+    for (let i = p+1; i < q; i++) {
         yield [[ActionType.HIGHLIGHT, i]];
         let j = i-1;
-        while (j >= 0) {
+        // while (j >= 0) {
+        while (j >= p) {
             yield [[ActionType.COMPARE, j+1, j]];
             if (comparator(key(array[j+1]), key(array[j])) >= 0)
                 break;
@@ -70,7 +76,7 @@ export function* InsertionSort(array, key=(o => o), comparator=((a, b) => a-b)) 
 }
 
 export function* AnimatableInsertionSort(array) {
-    yield* InsertionSort(array);
+    yield* InsertionSort(array, 0, array.length);
 }
 
 export function* Merge(array, p, r, q, key, comparator) {
@@ -242,7 +248,56 @@ export function* AnimatableHeapSort(array) {
     yield* HeapSort(array);
 }
 
-/** @param {a.AnimationContext} c */
+/**
+ * @param {number[]} array Array of numbers in the range [0,1) with a uniform distribution
+ * @param {number} bucketCount If undefined = array.length
+ */
+export function* BucketSort(array, bucketCount, key=(o => o), comparator=((a, b) => a-b)) {
+    bucketCount = bucketCount ?? array.length;
+    if (array.length <= 1) return;
+
+    const buckets = new Array(bucketCount);
+    for (let i = 0; i < buckets.length; i++)
+        buckets[i] = [];
+
+    for (let i = 0; i < array.length; i++) {
+        yield [[ActionType.HIGHLIGHT, i]];
+        const bi = Math.floor(key(array[i]) * buckets.length);
+        buckets[bi].push(array[i]);
+    }
+
+    const bucketSorts = [];
+    let i = 0;
+    for (const bucket of buckets) {
+        for (const val of bucket) {
+            array[i] = val;
+            yield [[ActionType.HIGHLIGHT, i]];
+            ++i;
+        }
+
+        if (bucket.length > 1) {
+            // InsertionSort could be replaced by any other sorter which works within a range.
+            // InsertionSort is used by default because bucketCount = array.length
+            // Moreover, the numbers are uniformly distributed.
+            // Which means that bucket.length will always be small.
+            bucketSorts.push(InsertionSort(array, i-bucket.length, i, key, comparator));
+        }
+    }
+
+    yield* ZipActions(...bucketSorts);
+}
+
+export function* AnimatableBucketSort(array) {
+    yield* BucketSort(array);
+}
+
+/**
+ * `sortOpt.sorter` must be a sorter which sorts an array with
+ * elements in the range [0,1). Any exported function that starts
+ * with Animatable is supported.
+ * @param {a.AnimationContext} c
+ * @param {object} sortOpt
+ */
 export function* SortingAnimation(c, sortOpt) {
     const array = new Array(sortOpt.itemCount ?? 256).fill(0).map(() => Math.random());
     // console.log(array);

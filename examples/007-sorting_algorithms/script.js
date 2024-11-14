@@ -5,6 +5,7 @@ import {
     AnimatableMergeSort,
     AnimatableQuickSort,
     AnimatableHeapSort,
+    AnimatableBucketSort,
     SortingAnimation,
 } from "./sorting.js";
 
@@ -60,29 +61,15 @@ window.addEventListener("load", () => {
     const onSelectionUpdate = () => {
         const $option = $algoSelect.options.item($algoSelect.selectedIndex);
         switch ($option.value) {
-        case "bubble":
-            sortOpt.sorter = AnimatableBubbleSort;
-            onRestart();
-            break;
-        case "insert":
-            sortOpt.sorter = AnimatableInsertionSort;
-            onRestart();
-            break;
-        case "merge":
-            sortOpt.sorter = AnimatableMergeSort;
-            onRestart();
-            break;
-        case "quick":
-            sortOpt.sorter = AnimatableQuickSort;
-            onRestart();
-            break;
-        case "heap":
-            sortOpt.sorter = AnimatableHeapSort;
-            onRestart();
-            break;
-        default:
-            break;
+        case "bubble": sortOpt.sorter = AnimatableBubbleSort;    break;
+        case "insert": sortOpt.sorter = AnimatableInsertionSort; break;
+        case "merge":  sortOpt.sorter = AnimatableMergeSort;     break;
+        case "quick":  sortOpt.sorter = AnimatableQuickSort;     break;
+        case "heap":   sortOpt.sorter = AnimatableHeapSort;      break;
+        case "bucket": sortOpt.sorter = AnimatableBucketSort;    break;
+        default: break;
         }
+        onRestart();
     };
 
     /** @type {HTMLInputElement} */
