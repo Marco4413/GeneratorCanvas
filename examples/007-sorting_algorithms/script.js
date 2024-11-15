@@ -18,7 +18,13 @@ function SerializeForm(form) {
             continue;
         const name = input.name.length > 0
             ? input.name : input.id;
-        searchParams.append(name, input.value);
+        switch (input.type) {
+        case "checkbox":
+            searchParams.append(name, input.checked ? "on" : "off");
+            break;
+        default:
+            searchParams.append(name, input.value);
+        }
     }
     return searchParams.toString();
 }
@@ -33,7 +39,15 @@ function DeserializeForm(form, params) {
         const name = input.name.length > 0
             ? input.name : input.id;
         const value = searchParams.get(name);
-        if (value) input.value = value;
+        if (value) {
+            switch (input.type) {
+            case "checkbox":
+                input.checked = value !== "off";
+                break;
+            default:
+                input.value = value;
+            }
+        }
     }
 }
 
