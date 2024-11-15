@@ -9,6 +9,33 @@ import {
     SortingAnimation,
 } from "./sorting.js";
 
+/** @param {HTMLElement} form */
+function SerializeForm(form) {
+    const inputs = form.querySelectorAll("input, select");
+    const searchParams = new URLSearchParams();
+    for (const input of inputs) {
+        if (input.type === "button")
+            continue;
+        const name = input.name.length > 0
+            ? input.name : input.id;
+        searchParams.append(name, input.value);
+    }
+    return searchParams.toString();
+}
+
+/** @param {HTMLElement} form */
+function DeserializeForm(form, params) {
+    const searchParams = new URLSearchParams(params);
+    const inputs = form.querySelectorAll("input, select");
+    for (const input of inputs) {
+        if (input.type === "button")
+            continue;
+        const name = input.name.length > 0
+            ? input.name : input.id;
+        const value = searchParams.get(name);
+        if (value) input.value = value;
+    }
+}
 
 window.addEventListener("load", () => {
     const $canvas = document.getElementById("animation");
@@ -18,6 +45,8 @@ window.addEventListener("load", () => {
     window.addEventListener("resize", () => {
         player.ResizeRaw(window.innerWidth, window.innerHeight);
     });
+
+    const $settings = document.getElementById("settings");
 
     const $enableStepper = document.getElementById("enable-stepper");
     let stepOnce = false;
@@ -55,6 +84,12 @@ window.addEventListener("load", () => {
         player.Stop();
         player.Play(SortingAnimation, [ sortOpt ]);
     };
+
+    /** @type {HTMLInputElement} */
+    const $link = document.getElementById("link");
+    $link.addEventListener("click", () => {
+        window.location.search = `?${SerializeForm($settings)}`;
+    });
 
     /** @type {HTMLSelectElement} */
     const $algoSelect = document.getElementById("sorting-algorithm");
@@ -96,6 +131,8 @@ window.addEventListener("load", () => {
     $stepsPerUpdate.addEventListener("input", () => onStepSettingsChange());
     $itemCount.addEventListener("input", () => onItemCountChange());
     $restart.addEventListener("click", () => onRestart());
+
+    DeserializeForm($settings, window.location.search);
 
     onStepSettingsChange();
     onItemCountChange();
