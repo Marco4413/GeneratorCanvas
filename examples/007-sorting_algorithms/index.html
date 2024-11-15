@@ -28,11 +28,60 @@
     input.condition:not(:checked) ~ .conditional {
       display: none;
     }
+
+    p {
+      margin: 5px auto;
+    }
+
+    .tooltip-holder {
+      position: relative;
+    }
+
+    .tooltip-holder:not(:hover) > .tooltip {
+      display: none;
+    }
+
+    .tooltip {
+      position: absolute;
+      z-index: 1;
+      pointer-events: none;
+
+      width: min(max(200pt, 200%), 50vw);
+      height: fit-content;
+      padding: 5px;
+
+      box-sizing: border-box;
+
+      background-color: var(--background-color-dark);
+      border: solid var(--background-color-light) 1px;
+      border-radius: 5px;
+    }
+
+    .tooltip.right {
+      left: 100%;
+      top: 0%;
+      transform: translate(5px, 0px);
+    }
+
+    .tooltip.bottom {
+      left: 0%;
+      top: 100%;
+      transform: translate(0px, 5px);
+    }
   </style>
 </head>
 <body>
   <div>
-    <span style="color: #5652f1;">&block;</span>HIGHLIGHTED
+    <span class="tooltip-holder">
+      <span style="color: #5652f1;">&block;</span>HIGHLIGHTED
+      <div class="tooltip bottom">
+        <p><i>BubbleSort&colon;</i> current destination;</p>
+        <p><i>InsertionSort&colon;</i> element to be sorted;</p>
+        <p><i>MergeSort&colon;</i> work range, choice after comparison, just copied;</p>
+        <p><i>QuickSort&colon;</i> pivot;</p>
+        <p><i>BucketSort&colon;</i> copying to bucket, copying from bucket to array, InsertionSort on buckets;</p>
+      </div>
+    </span>
     <span style="color: #56f251;">&block;</span>SWAP
     <span style="color: #f65251;">&block;</span>COMPARISON
   </div>
