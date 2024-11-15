@@ -251,8 +251,11 @@ export function* AnimatableHeapSort(array) {
 /**
  * @param {number[]} array Array of numbers in the range [0,1) with a uniform distribution
  * @param {number} bucketCount If undefined = array.length
+ * @param {(array: any[], p: number, q: number, key: function, comparator: function) => void|Generator<number[][]>} bucketSorter
+ * Any sorter which accepts a range and key, comparator functions.
+ * If it's a Generator function, it must yield values which follow the standard of other sorters in this library.
  */
-export function* BucketSort(array, bucketCount, key=(o => o), comparator=((a, b) => a-b)) {
+export function* BucketSort(array, bucketCount, bucketSorter=InsertionSort, key=(o => o), comparator=((a, b) => a-b)) {
     bucketCount = bucketCount ?? array.length;
     if (array.length <= 1) return;
 
@@ -280,7 +283,12 @@ export function* BucketSort(array, bucketCount, key=(o => o), comparator=((a, b)
             // InsertionSort is used by default because bucketCount = array.length
             // Moreover, the numbers are uniformly distributed.
             // Which means that bucket.length will always be small.
-            bucketSorts.push(InsertionSort(array, i-bucket.length, i, key, comparator));
+            const sorting = bucketSorter(array, i-bucket.length, i, key, comparator);
+            // Since bucketSorter may be chosen by the user, make sure it's a Generator.
+            // If so, push it into the list of all sorting generators.
+            if (sorting && sorting.next) {
+                bucketSorts.push(sorting);
+            }
         }
     }
 
@@ -288,7 +296,10 @@ export function* BucketSort(array, bucketCount, key=(o => o), comparator=((a, b)
 }
 
 export function* AnimatableBucketSort(array) {
-    yield* BucketSort(array);
+    // If the array is uniformly distributed, in the best-case scenario,
+    //  there will be at most 4 elements in each bucket.
+    // Which InsertionSort should be able to handle quickly.
+    yield* BucketSort(array, Math.floor(array.length/4));
 }
 
 /**
