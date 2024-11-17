@@ -302,10 +302,20 @@ export function* AnimatableBucketSort(array) {
     yield* BucketSort(array, Math.floor(array.length/4));
 }
 
+// All sorters that work with SortingAnimation
+export const Animatable = Object.freeze({
+    BubbleSort:    AnimatableBubbleSort,
+    InsertionSort: AnimatableInsertionSort,
+    MergeSort:     AnimatableMergeSort,
+    QuickSort:     AnimatableQuickSort,
+    HeapSort:      AnimatableHeapSort,
+    BucketSort:    AnimatableBucketSort,
+});
+
 /**
  * `sortOpt.sorter` must be a sorter which sorts an array with
- * elements in the range [0,1). Any exported function that starts
- * with Animatable is supported.
+ * elements in the range [0,1). All functions from {@link Animatable}
+ * are supported.
  * @param {a.AnimationContext} c
  * @param {object} sortOpt
  */

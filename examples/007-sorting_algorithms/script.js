@@ -1,13 +1,5 @@
 import * as a from "../../animation.js";
-import {
-    AnimatableBubbleSort,
-    AnimatableInsertionSort,
-    AnimatableMergeSort,
-    AnimatableQuickSort,
-    AnimatableHeapSort,
-    AnimatableBucketSort,
-    SortingAnimation,
-} from "./sorting.js";
+import { Animatable, SortingAnimation } from "./sorting.js";
 
 /** @param {HTMLElement} form */
 function SerializeForm(form) {
@@ -79,7 +71,7 @@ window.addEventListener("load", () => {
     });
 
     const sortOpt = {
-        sorter: AnimatableInsertionSort,
+        sorter: Animatable.InsertionSort,
         step: () => {
             if (!$enableStepper.checked)
                 return true;
@@ -89,8 +81,10 @@ window.addEventListener("load", () => {
         },
     };
 
-    // Exported so it can be accessed through DevTools
-    window.__sortOpt = sortOpt;
+    // Exported so they can be accessed through DevTools
+    // Pressing the "Restart" button will apply all changes
+    window.__animatable = Animatable;
+    window.__sortOpt    = sortOpt;
 
     /** @type {HTMLInputElement} */
     const $restart = document.getElementById("restart");
@@ -110,12 +104,12 @@ window.addEventListener("load", () => {
     const onSelectionUpdate = () => {
         const $option = $algoSelect.options.item($algoSelect.selectedIndex);
         switch ($option.value) {
-        case "bubble": sortOpt.sorter = AnimatableBubbleSort;    break;
-        case "insert": sortOpt.sorter = AnimatableInsertionSort; break;
-        case "merge":  sortOpt.sorter = AnimatableMergeSort;     break;
-        case "quick":  sortOpt.sorter = AnimatableQuickSort;     break;
-        case "heap":   sortOpt.sorter = AnimatableHeapSort;      break;
-        case "bucket": sortOpt.sorter = AnimatableBucketSort;    break;
+        case "bubble": sortOpt.sorter = Animatable.BubbleSort;    break;
+        case "insert": sortOpt.sorter = Animatable.InsertionSort; break;
+        case "merge":  sortOpt.sorter = Animatable.MergeSort;     break;
+        case "quick":  sortOpt.sorter = Animatable.QuickSort;     break;
+        case "heap":   sortOpt.sorter = Animatable.HeapSort;      break;
+        case "bucket": sortOpt.sorter = Animatable.BucketSort;    break;
         default: break;
         }
         onRestart();
