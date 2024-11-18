@@ -104,12 +104,13 @@ window.addEventListener("load", () => {
     const onSelectionUpdate = () => {
         const $option = $algoSelect.options.item($algoSelect.selectedIndex);
         switch ($option.value) {
-        case "bubble": sortOpt.sorter = Animatable.BubbleSort;    break;
-        case "insert": sortOpt.sorter = Animatable.InsertionSort; break;
-        case "merge":  sortOpt.sorter = Animatable.MergeSort;     break;
-        case "quick":  sortOpt.sorter = Animatable.QuickSort;     break;
-        case "heap":   sortOpt.sorter = Animatable.HeapSort;      break;
-        case "bucket": sortOpt.sorter = Animatable.BucketSort;    break;
+        case "bubble": sortOpt.sorter = Animatable.BubbleSort;     break;
+        case "insert": sortOpt.sorter = Animatable.InsertionSort;  break;
+        case "merge":  sortOpt.sorter = Animatable.MergeSort;      break;
+        case "quick":  sortOpt.sorter = Animatable.QuickSort;      break;
+        case "quickh": sortOpt.sorter = Animatable.HoareQuickSort; break;
+        case "heap":   sortOpt.sorter = Animatable.HeapSort;       break;
+        case "bucket": sortOpt.sorter = Animatable.BucketSort;     break;
         default: break;
         }
         onRestart();

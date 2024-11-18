@@ -124,12 +124,12 @@ export function* AnimatableMergeSort(array) {
     yield* MergeSort(array, 0, array.length);
 }
 
-export function* Partition(array, p, q, key, comparator) {
+export function* LomutoPartition(array, p, q, key, comparator) {
     if (q-p <= 1) {
         throw new Error(`Invalid range [${q},${p}) in array of len ${array.length}`);
     }
 
-    const xi = q-1;
+    let xi  = q-1;
     const x = key(array[xi]);
     yield [[ActionType.HIGHLIGHT, xi]];
 
@@ -141,9 +141,20 @@ export function* Partition(array, p, q, key, comparator) {
                 yield [
                     [ActionType.HIGHLIGHT, xi],
                     [ActionType.SWAP, i+1, j]];
+
                 const tmp  = array[j];
                 array[j]   = array[i+1];
                 array[i+1] = tmp;
+
+                // Keep track of the pivot's position.
+                // This is not needed by this algorithm.
+                // However, it will be useful when the pivot
+                //  index will be moved to an optional argument.
+                switch (xi) {
+                case i+1: xi = j;   break;
+                case j:   xi = i+1; break;
+                default:
+                }
             }
             ++i;
         }
@@ -152,17 +163,67 @@ export function* Partition(array, p, q, key, comparator) {
     return i;
 }
 
-export function* QuickSort(array, p, q, key=(o => o), comparator=((a, b) => a-b)) {
+export function* HoarePartition(array, p, q, key, comparator) {
+    if (q-p <= 1) {
+        throw new Error(`Invalid range [${q},${p}) in array of len ${array.length}`);
+    }
+
+    let xi  = p;
+    const x = key(array[xi]);
+    yield [[ActionType.HIGHLIGHT, xi]];
+
+    let i = p;
+    let j = q-1;
+
+    while (true) {
+        yield [[ActionType.COMPARE, i, xi]];
+        while (comparator(key(array[i]), x) < 0) {
+            ++i;
+            yield [[ActionType.COMPARE, i, xi]];
+        }
+
+        yield [[ActionType.COMPARE, j, xi]];
+        while (comparator(key(array[j]), x) > 0) {
+            --j;
+            yield [[ActionType.COMPARE, j, xi]];
+        }
+
+        if (i >= j) {
+            return j;
+        }
+
+        yield [
+            [ActionType.HIGHLIGHT, xi],
+            [ActionType.SWAP, i, j]];
+        const tmp = array[j];
+        array[j]  = array[i];
+        array[i]  = tmp;
+
+        // Keep track of the pivot's position
+        switch (xi) {
+        case i: xi = j; break;
+        case j: xi = i; break;
+        default:
+        }
+    }
+}
+
+export function* QuickSort(array, p, q, partition=LomutoPartition, key=(o => o), comparator=((a, b) => a-b)) {
     if (q-p <= 1) return;
-    const r = yield* Partition(array, p, q, key, comparator);
+    const it = partition(array, p, q, key, comparator);
+    const r = (it && it.next) ? (yield* it) : it;
     yield* ZipActions(
-        QuickSort(array, p, r, key, comparator),
-        QuickSort(array, r+1, q, key, comparator),
+        QuickSort(array, p, r, partition, key, comparator),
+        QuickSort(array, r+1, q, partition, key, comparator),
     );
 }
 
 export function* AnimatableQuickSort(array) {
-    yield* QuickSort(array, 0, array.length);
+    yield* QuickSort(array, 0, array.length, LomutoPartition);
+}
+
+export function* AnimatableHoareQuickSort(array) {
+    yield* QuickSort(array, 0, array.length, HoarePartition);
 }
 
 export function HeapLeft(i) {
@@ -304,12 +365,15 @@ export function* AnimatableBucketSort(array) {
 
 // All sorters that work with SortingAnimation
 export const Animatable = Object.freeze({
-    BubbleSort:    AnimatableBubbleSort,
-    InsertionSort: AnimatableInsertionSort,
-    MergeSort:     AnimatableMergeSort,
-    QuickSort:     AnimatableQuickSort,
-    HeapSort:      AnimatableHeapSort,
-    BucketSort:    AnimatableBucketSort,
+    BubbleSort:     AnimatableBubbleSort,
+    InsertionSort:  AnimatableInsertionSort,
+    MergeSort:      AnimatableMergeSort,
+    /** Uses Lomuto's Partitioning */
+    QuickSort:      AnimatableQuickSort,
+    /** Uses Hoare's Partitioning */
+    HoareQuickSort: AnimatableHoareQuickSort,
+    HeapSort:       AnimatableHeapSort,
+    BucketSort:     AnimatableBucketSort,
 });
 
 /**
