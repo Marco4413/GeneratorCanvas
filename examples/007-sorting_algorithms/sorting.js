@@ -227,11 +227,11 @@ export function* AnimatableHoareQuickSort(array) {
 }
 
 export function HeapLeft(i) {
-    return i*2;
+    return (i+1)*2-1;
 }
 
 export function HeapRight(i) {
-    return i*2+1;
+    return (i+1)*2;
 }
 
 export function* Heapify(heap, i, key, comparator) {
