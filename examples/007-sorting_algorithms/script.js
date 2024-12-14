@@ -88,7 +88,7 @@ window.addEventListener("load", () => {
 
     /** @type {HTMLInputElement} */
     const $restart = document.getElementById("restart");
-    const onRestart = () => {
+    const restart = () => {
         player.Stop();
         player.Play(SortingAnimation, [ sortOpt ]);
     };
@@ -99,9 +99,17 @@ window.addEventListener("load", () => {
         window.location.search = `?${SerializeForm($settings)}`;
     });
 
+    const onAnySettingChanged = () => {
+        try {
+            localStorage.setItem("settings", SerializeForm($settings));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     /** @type {HTMLSelectElement} */
     const $algoSelect = document.getElementById("sorting-algorithm");
-    const onSelectionUpdate = () => {
+    const onAlgorithmChange = () => {
         const $option = $algoSelect.options.item($algoSelect.selectedIndex);
         switch ($option.value) {
         case "bubble": sortOpt.sorter = Animatable.BubbleSort;     break;
@@ -113,7 +121,8 @@ window.addEventListener("load", () => {
         case "bucket": sortOpt.sorter = Animatable.BucketSort;     break;
         default: break;
         }
-        onRestart();
+        onAnySettingChanged();
+        restart();
     };
 
     /** @type {HTMLInputElement} */
@@ -125,6 +134,7 @@ window.addEventListener("load", () => {
             sortOpt.updateDelay = $updateDelay.valueAsNumber;
         if (!Number.isNaN($stepsPerUpdate.valueAsNumber))
             sortOpt.stepsPerUpdate = Math.round($stepsPerUpdate.valueAsNumber);
+        onAnySettingChanged();
     };
 
     /** @type {HTMLInputElement} */
@@ -132,18 +142,22 @@ window.addEventListener("load", () => {
     const onItemCountChange = () => {
         if (!Number.isNaN($itemCount.valueAsNumber))
             sortOpt.itemCount = Math.max(0, Math.round($itemCount.valueAsNumber));
-        onRestart();
+        onAnySettingChanged();
+        restart();
     };
 
-    $algoSelect.addEventListener("input", () => onSelectionUpdate());
-    $updateDelay.addEventListener("input", () => onStepSettingsChange());
+    $algoSelect.addEventListener("input",     () => onAlgorithmChange());
+    $updateDelay.addEventListener("input",    () => onStepSettingsChange());
     $stepsPerUpdate.addEventListener("input", () => onStepSettingsChange());
-    $itemCount.addEventListener("input", () => onItemCountChange());
-    $restart.addEventListener("click", () => onRestart());
+    $itemCount.addEventListener("input",      () => onItemCountChange());
+    $restart.addEventListener("click",        () => restart());
 
+    try {
+        DeserializeForm($settings, localStorage.getItem("settings") ?? "");
+    } catch (error) { console.error(error); }
     DeserializeForm($settings, window.location.search);
 
     onStepSettingsChange();
     onItemCountChange();
-    onSelectionUpdate();
+    onAlgorithmChange();
 });
