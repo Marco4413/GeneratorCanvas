@@ -403,7 +403,7 @@ export function* SortingAnimation(c, sortOpt) {
         const elWidth = c.width / rects.length;
         rects.forEach((rect, idx) => {
             rect.color = newColor ?? rect.color;
-            rect.x = idx * elWidth;
+            rect.x = idx * elWidth + elWidth * horizontalMargin / 2;
             rect.y = c.height;
             rect.w = elWidth-(elWidth * horizontalMargin);
             rect.h = -c.height * array[idx] * shrinkHeight;
