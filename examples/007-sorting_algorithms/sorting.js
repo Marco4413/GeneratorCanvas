@@ -284,7 +284,7 @@ export function* HeapExtract(heap, key, comparator) {
     }
 
     heap.$heapSize--;
-    yield [[ActionType.SWAP, 0, heap.$heapSize-1]];
+    yield [[ActionType.SWAP, 0, heap.$heapSize]];
     {
         const tmp = heap[heap.$heapSize];
         heap[heap.$heapSize] = heap[0];
